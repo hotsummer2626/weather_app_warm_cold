@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import SearchBar from "./components/SearchBar";
+import LoadingElement from "./components/LoadingElement";
+import WeatherResult from "./components/WeatherResult";
+import { getCurrentWeather } from "./api/apis";
+import "./App.css";
 
-function App() {
+const App = () => {
+  const [weather, setWeather] = useState({});
+  const [isLoading, setIsLoaing] = useState(true);
+
+  const setDataWorkFlow = async (cityName) => {
+    setIsLoaing(true);
+    const weather = await getCurrentWeather(cityName);
+    if (weather) {
+      weather.temperature = parseFloat(weather.main.temp - 273.15).toFixed(1);
+      setWeather(weather);
+    }
+    setIsLoaing(false);
+  };
+
+  useEffect(() => {
+    setDataWorkFlow("sydney");
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={weather.temperature > 16 ? "container warm" : "container"}>
+      <SearchBar setDataWorkFlow={setDataWorkFlow} />
+      {isLoading ? (
+        <LoadingElement loading={isLoading} />
+      ) : (
+        <WeatherResult {...weather} />
+      )}
     </div>
   );
-}
+};
 
 export default App;
