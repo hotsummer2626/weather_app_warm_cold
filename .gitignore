@@ -373,4 +373,4 @@ yarn-debug.log*
 yarn-error.log*
 
 # api key
-/src/api/apikey.js
+/api/apikey.js
